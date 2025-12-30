@@ -2,9 +2,11 @@
 apiVersion: fetch.com/v1
 kind: StreamlitApp
 metadata:
-  name: hub
+  name: demo-app
   namespace: streamlit
 spec:
   repo: https://github.com/TBourton/streamlit-operator.git
-  ref: main
-  codeDir: streamlit-hub
+  branch: main
+  code_dir: demo-app
+  serviceAccountName: streamlit-serviceaccount
+  replicas: 1

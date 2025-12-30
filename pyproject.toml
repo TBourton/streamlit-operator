@@ -1,0 +1,120 @@
+[project]
+name="streamlit-operator"
+version="0.1.0"
+readme="README.md"
+requires-python=">=3.9"
+dependencies=[
+    "kubernetes",              # fix to whichever k8s version you are running https://github.com/kubernetes-client/python?tab=readme-ov-file#compatibility
+    "streamlit~=1.26.0",
+    "kopf[full-auth]~=1.36.0",
+    "PyYAML~=6.0",
+    "pydantic~=2.12.5",
+    "urllib3<2",
+    "typing-extensions~=4.15",
+]
+
+[dependency-groups]
+dev=[
+    "ruff~=0.14.0",
+    "teamcity-messages>=1.3,<2",
+    "pytest-mock~=3.14",
+    "pandas-stubs",
+    "types-PyYAML",
+    "pandas<2",
+    "yamllint>=1.37.1",
+    "semver>=3.0.4",
+    "ty>=0.0.8",
+    "prek>=0.2.25",
+]
+
+[tool.ruff]
+line-length     =120
+indent-width    =4
+fix             =true
+unsafe-fixes    =false
+target-version  ="py311"
+required-version="~=0.14.0"
+
+
+[tool.ruff.lint]
+select=["ALL"]
+ignore=[
+    "PL",
+    "ANN",
+    "D",
+    "PD901",
+    "FIX",
+    "TD",
+    "S",
+    "PGH003",
+    "PTH",
+    "RET504",
+    "C90",
+    "N999",
+    "N806",
+    "EM101",
+    "EM102",
+    "TRY003",
+    "TRY300",
+    "ERA001",
+    "UP007",
+    "UP045",
+    "LOG015",
+    "N815",
+    # Disable formatter conflicting lint rules https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
+]
+
+[tool.ruff.format]
+docstring-code-format     =true
+docstring-code-line-length="dynamic"
+
+[tool.ruff.lint.flake8-type-checking]
+exempt-modules=["typing", "typing_extensions"]
+
+[tool.ruff.lint.pydocstyle]
+convention="numpy"
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore rules for tests
+"**/tests/**.py"=[
+    "D",   # disable pydocstyle in tests
+    "S",   # disable bandit in tests
+    "INP", # disable implicit namespace packages in tests
+    "ANN", # disable annotations in tests
+]
+"experiments/**.py"=["ALL"]
+
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators=[
+    # Allow Pydantic's `@validator` decorator to trigger class method treatment.
+    "pydantic.validator",
+    # Allow SQLAlchemy's dynamic decorators, like `@field.expression`, to trigger class method treatment.
+    "declared_attr",
+    "expression",
+    "comparator",
+]
+
+[tool.ruff.lint.flake8-annotations]
+allow-star-arg-any=true
+mypy-init-return  =true
+
+[tool.ruff.lint.flake8-boolean-trap]
+extend-allowed-calls=["pydantic.Field"]
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses=false
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing=true

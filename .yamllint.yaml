@@ -1,0 +1,35 @@
+---
+yaml-files:
+- "*.yaml"
+- "*.yml"
+- .yamllint
+
+ignore:
+- .git
+- node_modules
+- "**/templates" # helm templates are not always valid yaml
+
+extends: default
+
+rules:
+  line-length: disable
+  braces: disable
+
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  indentation:
+    spaces: 2
+    indent-sequences: false
+
+  comments: disable
+  comments-indentation: disable
+
+  quoted-strings: disable
+
+  key-ordering: disable
+
+  trailing-spaces: enable
+  new-lines:
+    type: unix

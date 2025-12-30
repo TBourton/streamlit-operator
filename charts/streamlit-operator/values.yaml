@@ -1,0 +1,39 @@
+---
+
+baseDnsRecord: "tb-lab.fyi"
+suffix: "-streamlit"
+gitRepo: "https://github.com/TBourton/streamlit-operator.git"
+gitRef: "main" # Optional: defaults to chart version
+
+secrets:
+  gitSecret:
+    create: false
+    name: &gitSecretName git-secret
+  gitDeployKey:
+    create: false
+    name: &gitDeployKeyName git-deploy-key
+
+
+gitSyncAuthConfig:
+  env:
+  - name: GITSYNC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: *gitSecretName
+        key: password
+  - name: GITSYNC_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: *gitSecretName
+        key: username
+  volumes:
+  - name: git-deploy-key
+    secret:
+      secretName: *gitDeployKeyName
+      defaultMode: 400
+  volumeMounts:
+  - name: git-deploy-key
+    mountPath: /etc/git-secret
+    readOnly: true
+replicas: 1
+createNamespace: true

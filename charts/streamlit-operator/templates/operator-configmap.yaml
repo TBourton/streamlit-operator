@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: streamlit-operator-config
+  namespace: streamlit
+data:
+  config.yaml: |
+    # Schema for the config should match the struct in streamlit-operator/streamlit_operator_config.py
+
+    baseDnsRecord: {{ .Values.baseDnsRecord }}
+    suffix: {{ .Values.suffix }}
+    gitRepo: {{ .Values.gitRepo }}
+    gitRef: {{ include "streamlit-chart.gitRef" . }}
+
+    gitSyncAuthConfig:
+    {{- toYaml .Values.gitSyncAuthConfig | nindent 6 }}

@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamlit-operator
+  namespace: streamlit
+  labels:
+    app: streamlit-operator
+spec:
+  replicas: {{.Values.replicas }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  selector:
+    matchLabels:
+      app: streamlit-operator
+  template:
+    metadata:
+      labels:
+        app: streamlit-operator
+    spec:
+      securityContext:
+        fsGroup: 65533 # to make SSH key readable
+      serviceAccountName: streamlit-serviceaccount
+      initContainers:
+        - name: git-sync
+          image: registry.k8s.io/git-sync/git-sync:v4.5.0
+          env:
+            - name: GITSYNC_REPO
+              value: {{ .Values.gitRepo }}
+            - name: GITSYNC_REF
+              value: {{ include "streamlit-chart.gitRef" . }}
+            - name: GITSYNC_ROOT
+              value: /tmp/code
+            - name: GITSYNC_LINK
+              value: "repo"
+            - name: GITSYNC_SSH_KNOWN_HOSTS
+              value: "true"
+            - name: GITSYNC_ONE_TIME
+              value: "true"
+            - name: GITSYNC_LOGGING_FORMAT
+              value: json
+            - name: GITSYNC_MAX_FAILURES
+              value: "5"
+            {{- toYaml .Values.gitSyncAuthConfig.env | nindent 12 }}
+          volumeMounts:
+            - name: code
+              mountPath: /tmp/code
+            {{- toYaml .Values.gitSyncAuthConfig.volumeMounts | nindent 12 }}
+          securityContext:
+            runAsUser: 65533 # git-sync user
+      containers:
+      - name: streamlit-operator
+        image: python:3.11.14
+        env:
+          - name: BASE_DNS_RECORD
+            value: {{ required "Must provide a base dns to host your Streamlit apps" .Values.baseDnsRecord }}
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 8080
+          periodSeconds: 10
+        volumeMounts:
+          - name: code
+            mountPath: /app
+          - name: config
+            mountPath: "/config"
+            readOnly: true
+        workingDir: /app/repo/streamlit-operator
+        command: ["/app/repo/streamlit-operator/start.sh"]
+      volumes:
+        - name: code
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: streamlit-operator-config
+            items:
+              - key: config.yaml
+                path: config.yaml
+      {{- toYaml .Values.gitSyncAuthConfig.volumes | nindent 8 }}

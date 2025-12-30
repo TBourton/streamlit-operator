@@ -1,0 +1,18 @@
+---
+doublestar: true
+match_type: doublestar
+formatter:
+  indent: 2
+  retain_line_breaks: true
+  include_document_start: true
+  retain_quotes: true
+  indentless_arrays: true
+
+include:
+- "**/*.yaml"
+- "**/*.yml"
+
+exclude:
+- .git/**
+- node_modules/**
+- "**/templates/**" # helm templates are not always valid yaml

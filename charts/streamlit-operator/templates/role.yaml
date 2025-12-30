@@ -28,6 +28,11 @@ rules:
   - apiGroups: [fetch.com]
     resources: [streamlit-apps]
     verbs: [list, watch, create, update, patch, delete]
+
+  - apiGroups: [ zalando.org ]
+    resources: [ kopfpeerings ]
+    verbs: [ list, watch, create, update, patch, delete ]
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -44,24 +49,26 @@ rules:
   # Application: watching & handling for the custom resource we declare.
   - apiGroups: [fetch.com]
     resources: [streamlit-apps]
-    verbs: [list, watch, patch, create, update, delete]
+    verbs: [ list, watch, patch, create, update, delete ]
 
-  # Application: other resources it produces and manipulates.
-  # Here, we create Jobs+PVCs+Pods, but we do not patch/update/delete them ever.
+  - apiGroups: [ zalando.org ]
+    resources: [ kopfpeerings ]
+    verbs: [ list, watch, create, update, patch, delete ]
+
   - apiGroups: [batch, extensions]
     resources: [jobs]
-    verbs: [create]
+    verbs: [list]
 
   - apiGroups: [""]
     resources: [pods, persistentvolumeclaims, services]
-    verbs: [create, list, delete]
+    verbs: [ list, watch, create, update, patch, delete ]
 
   - apiGroups: ["apps"]
     resources: ["deployments"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
-  - apiGroups: ["networking.k8s.io"]
-    resources: ["ingresses"]
+  - apiGroups: ["networking.istio.io"]
+    resources: ["virtualservices"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
 

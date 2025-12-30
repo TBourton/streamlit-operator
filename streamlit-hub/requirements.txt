@@ -1,1 +1,4 @@
-kubernetes
+kubernetes # fix to whichever k8s version you are running https://github.com/kubernetes-client/python?tab=readme-ov-file#compatibility
+urllib3<2.0.0
+pyyaml
+streamlit

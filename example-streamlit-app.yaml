@@ -1,0 +1,23 @@
+---
+apiVersion: fetch.com/v1
+kind: StreamlitApp
+metadata:
+  name: name
+  namespace: streamlit
+spec:
+  repo: https://github.com/TBourton/streamlit-operator.git
+  ref: main
+  codeDir: demo-app
+  entrypoint: main.py
+  requirements: requirements.txt
+  enableServiceLinks: false
+  serviceAccountName: default
+  replicas: 1
+  image: python:3.11.14-slim
+  additionalLabels: {}
+  additionalVolumes: []
+  additionalVolumeMounts: []
+  additionalEnv: []
+  ingress:
+    annotations: {}
+    ingressClassName: nginx

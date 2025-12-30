@@ -1,5 +1,0 @@
-#baseDnsRecord: "this-is-a-test"
-#ingressAnnotations:
-#  annotation1: "value1"
-#  annotation2: "value2"
-suffix: "-streamlit"
